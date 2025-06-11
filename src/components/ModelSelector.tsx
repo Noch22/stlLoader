@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { STL_MODELS, STLModel, getModelUrl, checkModelExists } from '../data/stl-models';
-import { Package, CheckCircle, AlertCircle, Loader } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  STL_MODELS,
+  STLModel,
+  getModelUrl,
+  checkModelExists,
+} from "../data/stl-models";
+import { Package, CheckCircle, AlertCircle, Loader } from "lucide-react";
 
 interface ModelSelectorProps {
   onModelSelect: (modelUrl: string, modelName: string) => void;
   selectedModel: string | null;
 }
 
-export function ModelSelector({ onModelSelect, selectedModel }: ModelSelectorProps) {
+export function ModelSelector({
+  onModelSelect,
+  selectedModel,
+}: ModelSelectorProps) {
   const [availableModels, setAvailableModels] = useState<STLModel[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -15,14 +23,14 @@ export function ModelSelector({ onModelSelect, selectedModel }: ModelSelectorPro
     const checkModels = async () => {
       setLoading(true);
       const checkedModels: STLModel[] = [];
-      
+
       for (const model of STL_MODELS) {
         const exists = await checkModelExists(model.filename);
         if (exists) {
           checkedModels.push(model);
         }
       }
-      
+
       setAvailableModels(checkedModels);
       setLoading(false);
     };
@@ -48,8 +56,10 @@ export function ModelSelector({ onModelSelect, selectedModel }: ModelSelectorPro
     <div className="space-y-4">
       <div className="flex items-center space-x-2 mb-4">
         <Package className="w-5 h-5 text-cyan-400" />
-        <h3 className="text-lg font-semibold text-white">Available Models</h3>
-        <span className="text-sm text-gray-400">({availableModels.length} found)</span>
+        <h3 className="text-lg font-semibold text-white">Models disponibles</h3>
+        <span className="text-sm text-gray-400">
+          ({availableModels.length} trouvés)
+        </span>
       </div>
 
       {availableModels.length === 0 ? (
@@ -69,24 +79,27 @@ export function ModelSelector({ onModelSelect, selectedModel }: ModelSelectorPro
           {availableModels.map((model) => {
             const modelUrl = getModelUrl(model.filename);
             const isSelected = selectedModel === modelUrl;
-            
+
             return (
               <button
                 key={model.id}
                 onClick={() => handleModelSelect(model)}
                 className={`
                   w-full text-left p-3 rounded-lg transition-all duration-200
-                  ${isSelected 
-                    ? 'bg-cyan-500/20 border border-cyan-400/50' 
-                    : 'bg-gray-700/50 hover:bg-gray-600/50 border border-gray-600'
+                  ${
+                    isSelected
+                      ? "bg-cyan-500/20 border border-cyan-400/50"
+                      : "bg-gray-700/50 hover:bg-gray-600/50 border border-gray-600"
                   }
                 `}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex-1 min-w-0">
-                    <p className={`font-medium truncate ${
-                      isSelected ? 'text-cyan-400' : 'text-white'
-                    }`}>
+                    <p
+                      className={`font-medium truncate ${
+                        isSelected ? "text-cyan-400" : "text-white"
+                      }`}
+                    >
                       {model.name}
                     </p>
                     {model.description && (
@@ -107,13 +120,6 @@ export function ModelSelector({ onModelSelect, selectedModel }: ModelSelectorPro
           })}
         </div>
       )}
-
-      <div className="text-xs text-gray-500 space-y-1 mt-4 p-3 bg-gray-800/30 rounded-lg">
-        <p className="font-medium text-gray-400">Instructions:</p>
-        <p>• Place STL files in the public/models folder</p>
-        <p>• Update src/data/stl-models.ts to register new models</p>
-        <p>• Supported formats: Binary and ASCII STL</p>
-      </div>
     </div>
   );
 }

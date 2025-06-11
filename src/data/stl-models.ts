@@ -14,19 +14,19 @@ export const STL_MODELS: STLModel[] = [
     id: "dick",
     name: "Dickosaurus",
     filename: "dick.stl",
-    description: "Classic 3D moel off dinausaurus",
+    description: "Modélisation basée sur Jocelyn Marcilloux-Buisson",
   },
   {
     id: "jeancharles",
     name: "Jean Charles",
     filename: "jeancharles.stl",
-    description: "3D model of Jean Charles",
+    description: "Modèle de Jean-Charles",
   },
   {
     id: "thinker",
     name: "Thinker on toilets",
     filename: "think.stl",
-    description: "Thinker on his toilets",
+    description: "Chaque idée doit-être dûrement réfléchie",
   },
 ];
 

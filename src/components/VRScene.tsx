@@ -1,10 +1,10 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, Grid, Environment } from '@react-three/drei';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
-import * as THREE from 'three';
-import { WebXRManager } from '../utils/webxr-manager';
-import { VRMovement } from './VRMovement';
+import React, { useRef, useEffect, useState } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, Grid, Environment } from "@react-three/drei";
+import { STLLoader } from "three/examples/jsm/loaders/STLLoader.js";
+import * as THREE from "three";
+import { WebXRManager } from "../utils/webxr-manager";
+import { VRMovement } from "./VRMovement";
 
 interface VRSceneProps {
   modelUrl: string | null;
@@ -28,16 +28,22 @@ function STLModel({ url }: { url: string }) {
       (geometry) => {
         geometry.computeVertexNormals();
         geometry.center();
-        const size = new THREE.Box3().setFromObject(new THREE.Mesh(geometry)).getSize(new THREE.Vector3());
+        const size = new THREE.Box3()
+          .setFromObject(new THREE.Mesh(geometry))
+          .getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
         geometry.scale(2 / maxDim, 2 / maxDim, 2 / maxDim);
+        geometry.rotateX(-Math.PI / 2);
         setGeometry(geometry);
       },
       (progress) => {
-        console.log('Loading progress:', (progress.loaded / progress.total) * 100 + '%');
+        console.log(
+          "Loading progress:",
+          (progress.loaded / progress.total) * 100 + "%"
+        );
       },
       (error) => {
-        console.error('Error loading STL:', error);
+        console.error("Error loading STL:", error);
       }
     );
   }, [url]);
@@ -53,7 +59,7 @@ function STLModel({ url }: { url: string }) {
     const onSelectStart = (event: any) => {
       const controller = event.target;
       const intersections = getIntersections(controller, [mesh]);
-      
+
       if (intersections.length > 0) {
         setIsGrabbed(true);
         controller.userData.selected = mesh;
@@ -70,27 +76,30 @@ function STLModel({ url }: { url: string }) {
       }
     };
 
-    const getIntersections = (controller: THREE.Group, objects: THREE.Object3D[]) => {
+    const getIntersections = (
+      controller: THREE.Group,
+      objects: THREE.Object3D[]
+    ) => {
       const tempMatrix = new THREE.Matrix4();
       const raycaster = new THREE.Raycaster();
-      
+
       tempMatrix.identity().extractRotation(controller.matrixWorld);
       raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
       raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
-      
+
       return raycaster.intersectObjects(objects, false);
     };
 
-    controller1.addEventListener('selectstart', onSelectStart);
-    controller1.addEventListener('selectend', onSelectEnd);
-    controller2.addEventListener('selectstart', onSelectStart);
-    controller2.addEventListener('selectend', onSelectEnd);
+    controller1.addEventListener("selectstart", onSelectStart);
+    controller1.addEventListener("selectend", onSelectEnd);
+    controller2.addEventListener("selectstart", onSelectStart);
+    controller2.addEventListener("selectend", onSelectEnd);
 
     return () => {
-      controller1.removeEventListener('selectstart', onSelectStart);
-      controller1.removeEventListener('selectend', onSelectEnd);
-      controller2.removeEventListener('selectstart', onSelectStart);
-      controller2.removeEventListener('selectend', onSelectEnd);
+      controller1.removeEventListener("selectstart", onSelectStart);
+      controller1.removeEventListener("selectend", onSelectEnd);
+      controller2.removeEventListener("selectstart", onSelectStart);
+      controller2.removeEventListener("selectend", onSelectEnd);
     };
   }, [geometry, gl.xr.isPresenting]);
 
@@ -125,18 +134,18 @@ function VRControllers() {
 
     const controller1 = gl.xr.getController(0);
     const controller2 = gl.xr.getController(1);
-    
+
     // Add controller ray visualization
     const geometry = new THREE.BufferGeometry().setFromPoints([
       new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 0, -1)
+      new THREE.Vector3(0, 0, -1),
     ]);
-    
-    const material = new THREE.LineBasicMaterial({ color: 0x00D4FF });
-    
+
+    const material = new THREE.LineBasicMaterial({ color: 0x00d4ff });
+
     const line1 = new THREE.Line(geometry, material);
     const line2 = new THREE.Line(geometry, material);
-    
+
     controller1.add(line1);
     controller2.add(line2);
 
@@ -158,25 +167,25 @@ function HandTracking() {
 
     const hand1 = gl.xr.getHand(0);
     const hand2 = gl.xr.getHand(1);
-    
+
     const onHandConnected = (event: any) => {
-      console.log('Hand tracking connected:', event);
+      console.log("Hand tracking connected:", event);
       const hand = event.target;
-      
+
       // Add hand visualization
       const handGeometry = new THREE.SphereGeometry(0.02, 8, 8);
-      const handMaterial = new THREE.MeshBasicMaterial({ color: 0x00FF00 });
+      const handMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
       const handMesh = new THREE.Mesh(handGeometry, handMaterial);
-      
+
       hand.add(handMesh);
     };
 
-    hand1.addEventListener('connected', onHandConnected);
-    hand2.addEventListener('connected', onHandConnected);
+    hand1.addEventListener("connected", onHandConnected);
+    hand2.addEventListener("connected", onHandConnected);
 
     return () => {
-      hand1.removeEventListener('connected', onHandConnected);
-      hand2.removeEventListener('connected', onHandConnected);
+      hand1.removeEventListener("connected", onHandConnected);
+      hand2.removeEventListener("connected", onHandConnected);
     };
   }, [gl.xr.isPresenting]);
 
@@ -192,7 +201,7 @@ function SceneSetup({ vrActive }: { vrActive: boolean }) {
     if (!gl.xr) return;
 
     xrManagerRef.current = new WebXRManager(gl);
-    
+
     if (vrActive) {
       xrManagerRef.current.startVRSession();
       camera.userData.isVR = true;
@@ -234,12 +243,16 @@ export function VRScene({ modelUrl, vrActive, vrSupported }: VRSceneProps) {
           shadow-mapSize-width={2048}
           shadow-mapSize-height={2048}
         />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#8B5CF6" />
+        <pointLight
+          position={[-10, -10, -10]}
+          intensity={0.5}
+          color="#8B5CF6"
+        />
         <pointLight position={[10, -10, 10]} intensity={0.5} color="#10B981" />
 
         {/* Environment */}
         <Environment preset="night" />
-        
+
         {/* Grid floor */}
         <Grid
           renderOrder={-1}
@@ -249,8 +262,8 @@ export function VRScene({ modelUrl, vrActive, vrSupported }: VRSceneProps) {
           cellThickness={0.6}
           sectionSize={3.3}
           sectionThickness={1.5}
-          sectionColor={'#00D4FF'}
-          cellColor={'#6366f1'}
+          sectionColor={"#00D4FF"}
+          cellColor={"#6366f1"}
           fadeDistance={30}
           fadeStrength={1}
         />
