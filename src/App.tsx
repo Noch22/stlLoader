@@ -82,14 +82,9 @@ function App() {
       <div className="absolute top-0 left-0 right-0 z-20 p-4">
         <div className="flex justify-between items-center">
           <div className="flex items-center space-x-3">
-            <Headphones className="w-8 h-8 text-cyan-400" />
+            <img src="kingstl.png" alt="" className="w-10 object-contain" />
             <div>
-              <h1 className="text-2xl font-bold text-white">
-                STL Visualisateur
-              </h1>
-              {selectedModelName && (
-                <p className="text-sm text-cyan-400">{selectedModelName}</p>
-              )}
+              <h1 className="text-2xl font-bold text-white">King STL</h1>
             </div>
           </div>
 
